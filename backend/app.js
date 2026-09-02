@@ -3,6 +3,7 @@ const cors = require('cors');
 const authRoutes = require('./src/routes/authRoutes');
 const courseRoutes = require('./src/routes/courseRoutes');
 const lessonRoutes = require('./src/routes/lessonRoute');
+const enrollmentRoutes = require('./src/routes/enrollmentRoutes');
 
 const app = express();
 
@@ -16,5 +17,7 @@ app.use('/api/auth',authRoutes);
 app.use('/api',courseRoutes);
 //routes for lesson
 app.use('/api',lessonRoutes);
+//routes for enrollment of student
+app.use('/api',enrollmentRoutes);
 
 module.exports = app;

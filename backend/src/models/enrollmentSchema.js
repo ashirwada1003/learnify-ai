@@ -7,13 +7,13 @@ const enrollmentSchema = new mongoose.Schema({
     },
     course:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"Course",
+        ref:"Courses",
     },
     completedLessons:
         [
             {
                 type:mongoose.Schema.Types.ObjectId,
-                ref:"Lesson"
+                ref:"Lessons"
             }
         ]
 },{timestamps:true});
