@@ -4,6 +4,7 @@ const authRoutes = require('./src/routes/authRoutes');
 const courseRoutes = require('./src/routes/courseRoutes');
 const lessonRoutes = require('./src/routes/lessonRoute');
 const enrollmentRoutes = require('./src/routes/enrollmentRoutes');
+const paymentRoutes = require('./src/routes/paymentRoutes');
 
 const app = express();
 
@@ -19,5 +20,7 @@ app.use('/api',courseRoutes);
 app.use('/api',lessonRoutes);
 //routes for enrollment of student
 app.use('/api',enrollmentRoutes);
+//routes for payment
+app.use('/api', paymentRoutes);
 
 module.exports = app;
