@@ -1,5 +1,6 @@
 const lessonModel = require('../models/Lesson');
 const courseModel = require('../models/Course');
+const {generateEmbedding} = require('../services/ai.service');
 
 const createLesson = async(req,res)=>{
     try{
@@ -28,6 +29,9 @@ const createLesson = async(req,res)=>{
                 message:"You are not allowed to add lessons to this course"
             });
         };
+        //generate the emedding before creating lesson
+        const textToEmbed = `${title}. ${content}`;
+        const embedding = await generateEmbedding(textToEmbed)
 
         //safe to create lesson now
         const lesson = await lessonModel.create({
@@ -35,7 +39,8 @@ const createLesson = async(req,res)=>{
             title,
             content,
             videoUrl,
-            order
+            order,
+            embedding
         });
         return res.status(201).json({
             message:"Lesson created succesfully",

@@ -19,7 +19,8 @@ const lessonSchema = new mongoose.Schema({
     },
     order:{
         type:Number
-    }
+    },
+    embedding:[Number],
 },{timestamps:true});
 
 const lessonModel = mongoose.model("Lessons",lessonSchema);
