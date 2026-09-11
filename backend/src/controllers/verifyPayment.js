@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const enrollmentModel = require('../models/enrollmentSchema')
 
 const verifyPayment = async (req, res) => {
     try {
@@ -16,7 +17,17 @@ const verifyPayment = async (req, res) => {
                 message:"Payment verification failed!"
             })
         }
+        const enrollment = await enrollmentModel.create({
+            student : req.user._id,
+            course : courseId
+        });
+        return res.status(201).json({
+            message:"Payment verified and enrolled successfully",
+            enrollment
+        })
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
 };
+
+module.exports = {verifyPayment};
