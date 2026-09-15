@@ -5,6 +5,8 @@ const courseRoutes = require('./src/routes/courseRoutes');
 const lessonRoutes = require('./src/routes/lessonRoute');
 const enrollmentRoutes = require('./src/routes/enrollmentRoutes');
 const paymentRoutes = require('./src/routes/paymentRoutes');
+const aiRoutes = require('./src/routes/aiRoute');
+const quizRoutes = require('./src/routes/quizRoutes');
 
 const app = express();
 
@@ -22,5 +24,8 @@ app.use('/api',lessonRoutes);
 app.use('/api',enrollmentRoutes);
 //routes for payment
 app.use('/api', paymentRoutes);
-
+//routes for ai
+app.use('/api',aiRoutes);
+//routes for quiz generator
+app.use('/api', quizRoutes);
 module.exports = app;
