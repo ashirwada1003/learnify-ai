@@ -1,6 +1,7 @@
 const lessonModel = require('../models/Lesson');
 const courseModel = require('../models/Course');
 const {generateEmbedding} = require('../services/ai.service');
+const { sendCourseNotification } = require('../services/notification.service');
 
 const createLesson = async(req,res)=>{
     try{
@@ -42,6 +43,11 @@ const createLesson = async(req,res)=>{
             order,
             embedding
         });
+
+        // ... after the lesson is successfully created ...
+        const io = req.app.get('io');  // retrieve the io instance we stored earlier
+        sendCourseNotification(io, courseId, `New lesson added: "${title}"`)
+
         return res.status(201).json({
             message:"Lesson created succesfully",
             lesson
