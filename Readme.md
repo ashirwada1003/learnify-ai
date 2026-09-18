@@ -154,3 +154,32 @@ The `10` is called the "cost factor" — it makes each hash deliberately slow to
 findOne doesn't return an array at all — it returns either one single document (a plain object, like { _id, name, email, ... }) or null if nothing matches
 
 This is the key difference from find(), which always returns an array (even if it's empty [], or has just one result inside [{...}])
+
+For instructor
+http://localhost:5000/api/auth/register--register
+http://localhost:5000/api/auth/login--login(change role to instructor as by defualt it was admin)
+http://localhost:5000/api/courses--copy the token of instructor and create a course with title,description and price.
+http://localhost:5000/api/courses/6aa8e84557a7dbe55562e977/lessons--create a lesson with instructor token, and in the url send the courseId so that under which course we are creating or adding the lesson.
+http://localhost:5000/api/courses--get all the courses
+http://localhost:5000/api/courses/6a90115460910af2e5b05cd1--here get an individual course based on passing the course id
+
+
+For Student
+http://localhost:5000/api/auth/register--register
+http://localhost:5000/api/auth/login--login
+    {
+    "email":"student2@test.com",
+    "password": "test1234"
+    }
+http://localhost:5000/api/courses/6aa8e84557a7dbe55562e977/enroll--here you student should enroll so use course Id pass it on to parameter on URL with passing the student token
+http://localhost:5000/api/courses/6aa8e84557a7dbe55562e977/enroll--now if you send the same thing you will get the reponse as you are already enrolled to this course
+http://localhost:5000/api/courses-create course with price with instructor token in authorization bearer token
+{
+    "title":"Advanced Topics",
+    "description": "Deep dive into advanced Node.js concepts",
+    "price": 299
+}
+http:..localhost:5000/api/courses/6aa912fa57a7dbe55562e97b/create-order--with student token(POST /api/courses/<paid_course_id>/create-order
+)
+
+http://localhost:5000/api/courses/6a90115460910af2e5b05cd1/create-order--student token
