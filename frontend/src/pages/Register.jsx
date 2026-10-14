@@ -13,6 +13,8 @@ import { useNavigate } from "react-router-dom";
 //our assistant file - handles taking to the backend
 import API from "../services/api";
 
+import { Link } from "react-router-dom";
+
 function Register(){
     const[name,setName]=useState("");
     const[email,setEmail]=useState("");
@@ -26,6 +28,7 @@ function Register(){
     const handleSubmit = async (e)=>{
         //stops the browser's default behavior of reloading the whole page on form submission
         e.preventDefault();
+        setError(""); //clear any old error before trying again next try..
 
         try{
             //send name,email,password to our backend's register route
@@ -43,11 +46,16 @@ function Register(){
         // flex + items-center + justify-center = center everything on the screen, both directions
         // min-h-screen = take up the full height of the browser window
         // bg-gray-100 = light gray background for the whole page
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="page-bg">
+
+            {/* glow decoration, same as Home and Login */}
+            <div className="glow-blob -top-24 -left-24 bg-emerald-500/30"></div>
+            <div className="glow-blob -bottom-24 -right-24 bg-teal-500/30"></div>
 
               {/* the actual white card that holds the form */}
-            <div className="bg-white p-8 rounded-lg shadow-md w-96">
-                <h2 className="text-2xl font-bold mb-6">Register</h2>
+            <div className="glass-card">
+                <h2 className="text-2xl font-bold">Create your account</h2>
+                <p className="mt-1 mb-6 text-sm text-slate-300">Start learning in a minute</p>
 
                 {/* onSubmit={handleSubmit} means: when this form is submitted, run our handleSubmit function */}
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -58,7 +66,7 @@ function Register(){
                      placeholder="Name"
                      value={name}
                      onChange={(e)=>setName(e.target.value)}
-                     className="w-full border border-gray-300 rounded px-3 py-2"
+                     className="input-field"
                     />
                     
                     <input
@@ -66,7 +74,7 @@ function Register(){
                      placeholder="Email"
                      value={email}
                      onChange={(e)=>setEmail(e.target.value)}
-                     className="w-full border border-gray-300 rounded px-3 py-2"
+                     className="input-field"
                     />
 
                     <input 
@@ -74,15 +82,23 @@ function Register(){
                      placeholder="Password"
                      value={password}
                      onChange={(e)=>setPassword(e.target.value)}
-                     className="w-full border border-gray-300 rounded px-3 py-2"
+                     className="input-field"
                     />
 
-                    <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+                    <button type="submit" className="btn-primary">
                         Register
                     </button>
                 </form>
                 {/* only show this paragraph IF there's an error message stored */}
                 {error && <p className="text-red-500 mt-3">{error}</p>}
+
+                <p className="mt-6 text-center text-sm text-slate-300">
+                  Already have an account?{" "}
+                 <Link to="/login" className="font-semibold text-emerald-300 underline">Login</Link>
+                </p>
+                 <p className="mt-2 text-center text-sm">
+                 <Link to="/" className="text-slate-400 hover:text-white">← Back to home</Link>
+                </p>
             </div>
         </div>
     )

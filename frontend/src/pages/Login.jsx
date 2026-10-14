@@ -1,6 +1,6 @@
 import { useState } from "react";
 import API from "../services/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
 
 function Login(){
     const[email,setEmail]=useState("");
@@ -23,10 +23,15 @@ function Login(){
     };
 
     return(
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="page-bg">
 
-            <div className="bg-white p-8 rounded-lg shadow-md w-96">
-                <h2 className="text-2xl font-bold mb-6">Login</h2>
+            {/* decorative glow blobs, same as Home */}
+            <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-emerald-500/30 blur-3xl"></div>
+            <div className="absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-teal-500/30 blur-3xl"></div>
+
+            <div className="glass-card">
+                <h2 className="text-2xl font-bold">Welcome back</h2>
+                <p className="mt-1 mb-6 text-sm text-slate-300">Login to continue learning</p>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
 
@@ -35,7 +40,7 @@ function Login(){
                      placeholder="Email"
                      value={email}
                      onChange={(e)=>setEmail(e.target.value)}
-                     className="w-full border border-gray-300 rounded px-3 py-2"
+                     className="input-field"
                     />
 
                     <input
@@ -43,15 +48,23 @@ function Login(){
                      placeholder="Password"
                      value={password}
                      onChange={(e)=>setPassword(e.target.value)}
-                     className="w-full border border-gray-300 rounded px-3 py-2"
+                     className="input-field"
                     />
 
-                    <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+                    <button type="submit" className="btn-primary">
                         Login
                     </button>
 
                 </form>
-                {error && <p className="text-red-500 mt-3">{error}</p>}
+                {error && <p className="mt-3 text-sm text-red-300 ">{error}</p>}
+
+                <p className="mt-6 text-center text-sm text-slate-300">
+                    New here?{" "}
+                    <Link to="/register" className="font-semibold text-emerald-300 underline">Create an account</Link>
+                </p>
+                <p className="mt-2 text-center text-sm">
+                 <Link to="/" className="text-slate-400 hover:text-white">← Back to home</Link>
+                </p>
             </div>
 
         </div>

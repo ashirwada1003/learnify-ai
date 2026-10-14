@@ -16,6 +16,11 @@ const enrollStudent = async (req,res)=>{
                 message:"Course not found"
             });
         };
+        if(course.price > 0){
+            return res.status(402).json({
+                message:"This is a paid course. Please complete payment to enroll"
+            })
+        }
         //step:3
         //before creating a new enrollment, first go check — "does an enrollment already exist for THIS student AND THIS course?"
         const existingEnrollment = await enrollementModel.findOne({
@@ -41,6 +46,18 @@ const enrollStudent = async (req,res)=>{
         })
     }
 }
+const getMyEnrollments = async (req, res) => {
+    try {
+        // identity always comes from req.user, never from req.body
+        const enrollments = await enrollementModel
+            .find({ student: req.user._id })
+            .populate("course", "title description price");
 
-module.exports = {enrollStudent}
+        return res.status(200).json({ enrollments });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = {enrollStudent,getMyEnrollments};
 

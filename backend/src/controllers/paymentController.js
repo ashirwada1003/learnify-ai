@@ -3,6 +3,7 @@ const courseModel = require('../models/Course');
 
 const paymentController = async(req,res)=>{
     try{
+        //which course does student want to buy? id comes from url
         const {courseId} = req.params;
 
         //fetch courses
@@ -25,6 +26,7 @@ const paymentController = async(req,res)=>{
             currency : "INR",
             receipt : `receipt_${courseId}`
          };
+
          const order = await razorpayInstance.orders.create(options);
          return res.status(200).json({
             message:"Order created succesfully",

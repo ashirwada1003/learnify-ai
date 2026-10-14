@@ -20,6 +20,9 @@ function CourseDetail(){
     // tracks whether we're waiting on the AI's response, so we can show a loading state
     const[asking,setAsking]=useState(false)
 
+    const[enrolled,setEnrolled] = useState(false);
+    const[enrollMessage,setEnrollMessage] = useState("");
+
     useEffect(()=>{
         const fetchCourseDetail = async () =>{
             // notice: we use the "id" from the URL here, to fetch THIS specific course
@@ -31,6 +34,19 @@ function CourseDetail(){
         fetchCourseDetail();
     },[id]); // <-- notice this is NOT an empty array this time
 
+        useEffect(()=>{
+        const checkEnrollment = async () => {
+            try{
+                const res = await API.get( enrolled );
+                // res.data.enrollments is a list, same as on the Dashboard
+                const alreadyEnrolled = res.data.enrollments.some( ??? );
+                setEnrolled(alreadyEnrolled);
+            }catch(err){
+                // not critical, so we leave it silent for now
+            }
+        };
+        checkEnrollment();
+    },[id]);
 
     //this runs when the student submits their question
     const handleAskTutor = async (e)=>{
@@ -51,6 +67,17 @@ function CourseDetail(){
             setAsking(false); //stop loading,whether it succeeded or failed
         }
     };
+
+    const handleEnroll = async() =>{
+        
+        try{
+            const res = await API.post(`/courses/${id}/enroll`);
+            setEnrolled(true);
+            setEnrollMessage(res.data.message);
+        }catch(err){
+            setEnrollMessage(err.response?.data?.message || "something went wrong");
+        }
+    }
     return(
         <div className="p-8">
             {/* course might still be null on the very first render, before the fetch completes —
@@ -60,6 +87,20 @@ function CourseDetail(){
                     <h1 className="text-3xl font-bold">{course.title}</h1>
                     <p className="text-gray-600 mt-2">{course.description}</p>
 
+                    {/* show the enroll button only when the student is not enrolled yet */}
+                    {!enrolled && (
+                        <button  
+                         type="button"
+                         onClick={handleEnroll}
+                         className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 mt-4"
+                        >
+                            Enroll now
+                        </button>
+                    )}
+                    {/* show the backend's message(success, already enrolled, paid courses, etc) */}
+                    {enrollMessage && (
+                        <p className="mt-2 text-sm text-gray-700">{enrollMessage}</p>
+                    )}
                     <h2 className="text-xl font-semibold mt-6 mb-3">Lessons</h2>
                     <ul className="space-y-2">
                         {lessons.map((lesson)=>(

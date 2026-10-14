@@ -1,1 +1,23 @@
 @import "tailwindcss";
+
+@layer components {
+    /* full-page green gradient background */
+    .page-bg {
+        @apply relative flex min-h-screen items-center justify-center overflow-hidden bg-linear-to-br from-slate-900 via-emerald-900 to-teal-900 px-4 text-white;
+    }
+
+    /* frosted glass card */
+    .glass-card {
+        @apply relative w-full max-w-sm rounded-2xl border border-white/10 bg-white/10 p-8 shadow-xl backdrop-blur;
+    }
+
+    /* text inputs on dark glass */
+    .input-field {
+        @apply w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-white placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-400;
+    }
+
+    /* main green button */
+    .btn-primary {
+        @apply w-full rounded-lg bg-emerald-500 py-2 font-semibold shadow-lg transition hover:bg-emerald-400;
+    }
+}
