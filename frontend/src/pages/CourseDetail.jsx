@@ -1,60 +1,60 @@
 import { useEffect, useState } from "react";
-import {useParams} from "react-router-dom";
-import API from "../services/api"
+import { useParams } from "react-router-dom";
+import API from "../services/api";
+
 function CourseDetail(){
     const { id } = useParams();
 
-    //will hold the course + its lessons once fetched
+    // the course and its lessons, once fetched
     const[course,setCourse]=useState(null);
     const[lessons,setLessons]=useState([]);
 
-    // what the student is currently typing into the question box
+    // AI tutor box
     const[question,setQuestion]=useState("");
-
-    // the AI's most recent answer, once we get one back
     const[answer,setAnswer] = useState("");
-
-    // which lesson the answer came from (remember, askTutor returns this too)
     const[sourceLesson,setSourceLesson] = useState("");
+    const[asking,setAsking]=useState(false);
 
-    // tracks whether we're waiting on the AI's response, so we can show a loading state
-    const[asking,setAsking]=useState(false)
-
+    // enrollment
     const[enrolled,setEnrolled] = useState(false);
     const[enrollMessage,setEnrollMessage] = useState("");
+    // true while we are still asking the backend "am I already enrolled?"
+    const[checkingEnrollment,setCheckingEnrollment] = useState(true);
 
+    // fetch THIS course; runs again if the id in the URL changes
     useEffect(()=>{
         const fetchCourseDetail = async () =>{
-            // notice: we use the "id" from the URL here, to fetch THIS specific course
             const res = await API.get(`/courses/${id}`);
             setCourse(res.data.course);
             setLessons(res.data.lessons);
         };
-
         fetchCourseDetail();
-    },[id]); // <-- notice this is NOT an empty array this time
+    },[id]);
 
-        useEffect(()=>{
+    // check whether the logged-in student is already enrolled in this course
+    useEffect(()=>{
         const checkEnrollment = async () => {
             try{
-                const res = await API.get( enrolled );
-                // res.data.enrollments is a list, same as on the Dashboard
-                const alreadyEnrolled = res.data.enrollments.some( ??? );
+                const res = await API.get("/my-enrollments");
+                const alreadyEnrolled = res.data.enrollments.some((e)=> e.course._id === id);
                 setEnrolled(alreadyEnrolled);
             }catch(err){
-                // not critical, so we leave it silent for now
+                // not critical, so we stay silent
+            }finally{
+                // the check is over, whether it worked or failed
+                setCheckingEnrollment(false);
             }
         };
         checkEnrollment();
     },[id]);
 
-    //this runs when the student submits their question
+    // runs when the student submits a question
     const handleAskTutor = async (e)=>{
         e.preventDefault();
 
-        if(!question.trim()) return; //becz dont send an empty question
+        if(!question.trim()) return;
 
-        setAsking(true); //show loading state while we wait for the AI
+        setAsking(true);
 
         try{
             const res = await API.post(`/courses/${id}/ask-tutor`,{question});
@@ -64,85 +64,86 @@ function CourseDetail(){
             setAnswer(err.response?.data?.message || "Something went wrong asking the tutor.");
             setSourceLesson("");
         }finally{
-            setAsking(false); //stop loading,whether it succeeded or failed
+            setAsking(false);
         }
     };
 
+    // runs when the student clicks Enroll
     const handleEnroll = async() =>{
-        
+        setEnrollMessage(""); // clear any old message first
         try{
             const res = await API.post(`/courses/${id}/enroll`);
             setEnrolled(true);
             setEnrollMessage(res.data.message);
         }catch(err){
-            setEnrollMessage(err.response?.data?.message || "something went wrong");
+            setEnrollMessage(err.response?.data?.message || "Something went wrong");
         }
-    }
-    return(
-        <div className="p-8">
-            {/* course might still be null on the very first render, before the fetch completes —
-            this check stops us from crashing trying to read .title off of null */}
-            {course && (
-                <>
-                    <h1 className="text-3xl font-bold">{course.title}</h1>
-                    <p className="text-gray-600 mt-2">{course.description}</p>
+    };
 
-                    {/* show the enroll button only when the student is not enrolled yet */}
-                    {!enrolled && (
-                        <button  
+    return(
+        <div className="page-wrap">
+            {course && (
+                <div className="mx-auto max-w-3xl">
+                    <h1 className="text-3xl font-bold">{course.title}</h1>
+                    <p className="text-slate-300">{course.description}</p>
+
+                    {/* show the button only when we have finished checking AND the student is not enrolled */}
+                    {!checkingEnrollment && !enrolled && (
+                        <button
                          type="button"
                          onClick={handleEnroll}
-                         className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 mt-4"
+                         className="mt-4 rounded-lg bg-emerald-500 px-4 py-2 font-semibold hover:bg-emerald-400"
                         >
                             Enroll now
                         </button>
                     )}
-                    {/* show the backend's message(success, already enrolled, paid courses, etc) */}
+
+                    {/* the backend's message (success, already enrolled, paid course, etc.) */}
                     {enrollMessage && (
-                        <p className="mt-2 text-sm text-gray-700">{enrollMessage}</p>
+                        <p className="mt-2 text-sm text-emerald-200">{enrollMessage}</p>
                     )}
+
                     <h2 className="text-xl font-semibold mt-6 mb-3">Lessons</h2>
                     <ul className="space-y-2">
                         {lessons.map((lesson)=>(
-                            <li key={lesson._id} className="border rounded p-3">{lesson.title}</li>
+                            <li key={lesson._id} className="rounded-lg border border-white/10 bg-white/10 p-3">{lesson.title}</li>
                         ))}
                     </ul>
 
                     <h2 className="text-xl font-semibold mt-6 mb-3">Ask the AI Tutor</h2>
 
-
-                    <form onSubmit={handleAskTutor}>
-
-                        <input 
+                    <form onSubmit={handleAskTutor} className="flex gap-2">
+                        <input
                          type="text"
                          placeholder="Ask a question about this course..."
                          value={question}
                          onChange={(e)=>setQuestion(e.target.value)}
-                         className="flex-1 border border-gray-300 rounded px-3 py-2"
+                         className="input-field"
                         />
 
-                        <button 
+                        <button
                           type="submit"
                           disabled={asking}
-                          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:bg-gray-400"
+                          className="rounded-lg bg-emerald-500 px-4 py-2 font-semibold hover:bg-emerald-400 disabled:bg-gray-500"
                         >
-                            {asking ? "Asking..." : "ASk"}
+                            {asking ? "Asking..." : "Ask"}
                         </button>
                     </form>
 
                     {answer && (
-                        <div className="bg-blue-50 border border-blue-200 rounded p-4 mb-6">
-                            <p className="text-gray-800">{answer}</p>
+                        <div className="rounded-lg border border-emerald-300/30 bg-emerald-400/10 p-4 mb-6">
+                            <p className="text-white">{answer}</p>
                             {sourceLesson && (
-                                <p className="text-sm text-gray-500 mt-2">Source: {sourceLesson}</p>
+                                <p className="text-slate-300 text-sm mt-2">Source: {sourceLesson}</p>
                             )}
                         </div>
                     )}
-                </>
+                </div>
             )}
         </div>
-    )
+    );
 }
+
 export default CourseDetail;
 
 // Something genuinely new to notice: [id] instead of [] in the dependency array. Remember, [] meant "run once, ever." [id] means: "run this effect once initially, AND again any time id changes." Why does that matter here specifically? Think about it — if a student is on this page viewing one course, then clicks a link to a different course, the URL's id changes, but the component doesn't necessarily get destroyed and recreated — so without [id] in the dependency array, it might keep showing the old course's data even though the URL changed.

@@ -10,9 +10,11 @@ function App(){
   return(
     <BrowserRouter>
       <Routes>
+        {/* public pages : anyone can open these */}
         <Route path="/" element={<Home/>}/>
         <Route path="/register" element={<Register/>}/>
         <Route path="/login" element={<Login/>}/>
+        {/* protected pages : only with token, and they get the navbar             */}
         <Route path="/dashboard" element={<Dashboard/>}/>
         <Route path="/courses" element={<Courses/>}/>
         <Route path="/courses/:id" element={<CourseDetail/>}/>

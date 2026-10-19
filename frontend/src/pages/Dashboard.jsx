@@ -25,18 +25,35 @@ function Dashboard(){
         fetchEnrollments();
     },[])
 
-    if(loading) return <div className="p-8">Loading...</div>
+    if(loading) return <div className="page-wrap">Loading...</div>
 
 
     return(
-        <div className="p-8">
-            <h1 className="text-2xl font-bold mb-4">My Courses</h1>
+        <div className="page-wrap">
+            <h1 className="text-2xl font-bold mb-6">My Courses</h1>
 
-            {enrollments.map((e)=>(
-                <div key={e._id} className="border rounded p-3 mb-2">
-                    <Link to={`/courses/${e.course._id}`}>{e.course.title}</Link>
+            {/* error message, only there is one */}
+            {error && <p className="mt-3 text-sm text-red-300">{error}</p>}
+
+            {/* empty state : no error no enrollments */}
+            {!error && enrollments.length === 0 && (
+                <div>
+                    <p className="text-slate-300">you haven't enrolled in any of the course yet.</p>
+                    <Link to="/courses" className="btn-hero mt-4 inline-block">
+                      Browse courses 
+                     </Link>
                 </div>
-            ))}
+            )}
+
+            {/* one card per enrolled course */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {enrollments.map((e)=>(
+                <Link key={e._id} to={`/courses/${e.course._id}`} className="course-card">
+                    <h3 className="font-bold text-lg">{e.course.title}</h3>
+                    <p className="text-slate-300 text-sm">{e.course.description}</p>
+                </Link>
+                ))}
+            </div>
         </div>
     )
 }

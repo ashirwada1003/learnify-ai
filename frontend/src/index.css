@@ -21,3 +21,12 @@
         @apply w-full rounded-lg bg-emerald-500 py-2 font-semibold shadow-lg transition hover:bg-emerald-400;
     }
 }
+/* same green background, but content starts at the top (for list pages) */
+.page-wrap {
+    @apply relative min-h-screen overflow-hidden bg-linear-to-br from-slate-900 via-emerald-900 to-teal-900 p-8 text-white;
+}
+
+/* a course card on dark background */
+.course-card {
+    @apply block rounded-xl border border-white/10 bg-white/10 p-5 backdrop-blur transition hover:bg-white/20 hover:shadow-lg;
+}

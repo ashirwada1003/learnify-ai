@@ -24,4 +24,18 @@ API.interceptors.request.use((req) => {
     return req;
 });
 
+// This runs automatically AFTER every response comes back.
+// If the backend says "401 Unauthorized" (token missing, invalid or expired),
+// we delete the old token and send the user to the login page.
+API.interceptors.response.use(
+    (res) => res,
+    (err) => {
+        if (err.response?.status === 401 && localStorage.getItem("token")) {
+            localStorage.removeItem("token");
+            window.location.href = "/login";
+        }
+        return Promise.reject(err);
+    }
+);
+
 export default API;
