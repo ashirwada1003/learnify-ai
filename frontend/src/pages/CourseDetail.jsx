@@ -80,6 +80,47 @@ function CourseDetail(){
         }
     };
 
+    const handleBuy = async () =>{
+        setEnrollMessage("");
+        try{
+            //1.ask your backened to create the order (the "bill")
+            const orderRes = await API.post(`/courses/${id}/create-order`);
+            const order = orderRes.data.order;
+ 
+            //2.settings for razrorpay popup  
+            const options = {
+                key : import.meta.env.VITE_RAZORPAY_KEY_ID,
+                amount : order.amount,
+                currency: order.currency,
+                name:"Learnify-AI",
+                description:course.title,
+                order_id:order.id,
+                //3.runs only after the payment succeeds inside the popup
+                handler:async(response)=>{
+                    try{
+                        const verifyRes = await API.post(`/courses/${id}/verify-payment`,{
+                        razorpay_order_id: response.razorpay_order_id,
+                        razorpay_payment_id: response.razorpay_payment_id,
+                        razorpay_signature: response.razorpay_signature,
+                        });
+                        setEnrolled(true);
+                        setEnrollMessage(verifyRes.data.message);
+                    }catch(err){
+                        setEnrollMessage(err.response?.data?.message || "payment verification failed ")
+                    }
+                },
+                theme:{color:"#10b981"},
+            };
+
+            //4. open the popup
+            const rzp = new window.Razorpay(options);
+
+            rzp.open();
+        }catch(err){
+            setEnrollMessage(err.response?.data?.message || "Could not start payment")
+        }
+    };
+
     return(
         <div className="page-wrap">
             {course && (
@@ -88,13 +129,22 @@ function CourseDetail(){
                     <p className="text-slate-300">{course.description}</p>
 
                     {/* show the button only when we have finished checking AND the student is not enrolled */}
-                    {!checkingEnrollment && !enrolled && (
+                    {!checkingEnrollment && !enrolled && course.price === 0 &&(
                         <button
                          type="button"
                          onClick={handleEnroll}
                          className="mt-4 rounded-lg bg-emerald-500 px-4 py-2 font-semibold hover:bg-emerald-400"
                         >
                             Enroll now
+                        </button>
+                    )}
+
+                    {!checkingEnrollment && !enrolled && course.price > 0 &&(
+                        <button 
+                         type="button"
+                         onClick={handleBuy}
+                         className="mt-4 rounded-lg bg-emerald-500 px-4 py-2 font-semibold hover:bg-emerald-400">
+                            Buy for ₹{course.price}
                         </button>
                     )}
 
