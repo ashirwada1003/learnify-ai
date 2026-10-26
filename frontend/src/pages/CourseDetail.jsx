@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import API from "../services/api";
 
 function CourseDetail(){
@@ -156,7 +156,14 @@ function CourseDetail(){
                     <h2 className="text-xl font-semibold mt-6 mb-3">Lessons</h2>
                     <ul className="space-y-2">
                         {lessons.map((lesson)=>(
-                            <li key={lesson._id} className="rounded-lg border border-white/10 bg-white/10 p-3">{lesson.title}</li>
+                            <li key={lesson._id} className="flex items-center justify-between rounded-lg border border-white/10 bg-white/10 p-3">
+                              <span>{lesson.title}</span>
+                              {enrolled && (
+                              <Link to={`/lessons/${lesson._id}/quiz`} className="text-sm text-emerald-300 underline hover:text-emerald-200">
+                                Take quiz
+                              </Link>
+                              )}
+                            </li>
                         ))}
                     </ul>
 

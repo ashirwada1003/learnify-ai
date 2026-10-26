@@ -5,6 +5,8 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Courses from "./pages/Courses";
 import CourseDetail from "./pages/CourseDetail";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Quiz from "./pages/Quiz";
 
 function App(){
   return(
@@ -14,10 +16,13 @@ function App(){
         <Route path="/" element={<Home/>}/>
         <Route path="/register" element={<Register/>}/>
         <Route path="/login" element={<Login/>}/>
-        {/* protected pages : only with token, and they get the navbar             */}
-        <Route path="/dashboard" element={<Dashboard/>}/>
-        <Route path="/courses" element={<Courses/>}/>
-        <Route path="/courses/:id" element={<CourseDetail/>}/>
+        {/* protected pages : only with token, and they get the navbar*/}
+        <Route element={<ProtectedRoute/>}>
+          <Route path="/dashboard" element={<Dashboard/>}/>
+          <Route path="/courses" element={<Courses/>}/>
+          <Route path="/courses/:id" element={<CourseDetail/>}/>
+          <Route path="/lessons/:lessonId/quiz" element={<Quiz/>}/>
+        </Route>
       </Routes>
     </BrowserRouter>
   )
